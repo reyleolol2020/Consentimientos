@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Gestión de clientes y consentimientos informados" />
+    <title>Clara CRM | Clientes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#clientes" aria-label="Clara CRM inicio">
+          <span class="brand-mark">C</span>
+          <span><strong>clara</strong><small>gestión bonita</small></span>
+        </a>
+        <nav class="main-nav" aria-label="Navegación principal">
+          <a class="nav-link active" href="#clientes"><span>▦</span> Clientes <b id="navClientCount">0</b></a>
+          <a class="nav-link" href="#agenda"><span>◷</span> Agenda</a>
+          <a class="nav-link" href="#consentimientos"><span>✓</span> Consentimientos</a>
+          <a class="nav-link" href="#reportes"><span>⌁</span> Reportes</a>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="profile"><span class="avatar">JM</span><span><strong>Jessica Mojica</strong><small>Administradora</small></span><button aria-label="Abrir menú de usuario">•••</button></div>
+          <p>Clara CRM <span>v1.0</span></p>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Espacio de trabajo</span><i>/</i><strong>Clientes</strong></div>
+          <div class="top-actions"><button class="icon-button" aria-label="Notificaciones">♧<em></em></button><button class="help-button">¿Necesitas ayuda?</button></div>
+        </header>
+
+        <section class="page-heading">
+          <div><p class="eyebrow">Panel general</p><h1>Tus clientes</h1><p class="subheading">Un espacio claro para cuidar cada relación.</p></div>
+          <button class="primary-button" id="openClientModal"><span>+</span> Nuevo cliente</button>
+        </section>
+
+        <section class="metric-grid" aria-label="Resumen de clientes">
+          <article class="metric-card"><div class="metric-label"><span class="metric-icon pink">♧</span><span>Total clientes</span></div><strong id="totalClients">0</strong><small><span class="positive">↑ 12%</span> vs. mes anterior</small></article>
+          <article class="metric-card"><div class="metric-label"><span class="metric-icon mint">◷</span><span>Próximas citas</span></div><strong id="upcomingAppointments">0</strong><small>Durante los próximos 7 días</small></article>
+          <article class="metric-card"><div class="metric-label"><span class="metric-icon yellow">✓</span><span>Consentimientos</span></div><strong id="pendingConsents">0</strong><small><span class="warning">Pendientes</span> de firma</small></article>
+          <article class="metric-card highlight"><div class="metric-label"><span class="sparkle">✦</span><span>Clientes activos</span></div><strong id="activeClients">0%</strong><small>De tu base total</small><div class="progress"><span id="activeProgress"></span></div></article>
+        </section>
+
+        <section class="workspace-panel">
+          <div class="panel-toolbar"><div><h2>Todos tus clientes</h2><p id="clientSummary">0 registros guardados</p></div><div class="toolbar-actions"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Buscar cliente..." /></label><select id="statusFilter" aria-label="Filtrar por estado"><option value="all">Todos los estados</option><option value="Activo">Activos</option><option value="Inactivo">Inactivos</option></select><button class="filter-button" id="filterButton">☷ <span>Filtros</span></button></div></div>
+          <div class="table-wrap"><table><thead><tr><th>CLIENTE</th><th>CÉDULA</th><th>CONTACTO</th><th>ÚLTIMA CITA</th><th>CONSENTIMIENTO</th><th>ESTADO</th><th></th></tr></thead><tbody id="clientTable"></tbody></table><div class="empty-state" id="emptyState" hidden><span>⌁</span><strong>No encontramos clientes</strong><p>Prueba otra búsqueda o crea un nuevo cliente.</p></div></div>
+          <div class="table-footer"><span id="tableCount">Mostrando 0 clientes</span><div class="pagination"><button disabled>‹</button><button class="current">1</button><button disabled>›</button></div></div>
+        </section>
+
+        <section class="qr-panel" aria-labelledby="qrTitle">
+          <div><p class="eyebrow">Acceso para tus clientas</p><h2 id="qrTitle">Código QR para ficha clínica</h2><p>La página debe estar publicada en internet para que el celular de la clienta pueda abrirla.</p><label class="qr-url-field">URL pública de tu página<input id="publicUrlInput" type="url" placeholder="https://tu-usuario.github.io/tu-repositorio/" /></label><div class="qr-actions"><button class="primary-button" id="generateQr" type="button">Generar QR</button><button class="secondary-button" id="downloadQr" type="button" disabled>Descargar código QR</button></div><p class="qr-warning" id="qrWarning" role="status"></p></div>
+          <div class="qr-box"><div id="qrCode"></div><small id="qrUrl"></small></div>
+        </section>
+
+        <section class="consent-panel" id="consentimientos" aria-labelledby="consentTitle">
+          <div class="consent-panel-header">
+            <div><p class="eyebrow">Documentos para diligenciar</p><h2 id="consentTitle">Consentimientos informados</h2><p>Selecciona la clienta para revisar y completar los documentos pendientes.</p></div>
+            <label class="client-picker">Clienta<select id="consentClientSelect" aria-label="Seleccionar clienta"></select></label>
+          </div>
+          <div class="consent-list">
+            <article class="consent-card"><span class="consent-card-icon">✦</span><div><h3>Consentimiento para el procedimiento</h3><p>Autorización general, beneficios, riesgos y cuidados posteriores.</p></div><button class="secondary-button consent-action" data-consent-type="procedure">Diligenciar</button></article>
+            <article class="consent-card"><span class="consent-card-icon">◎</span><div><h3>Autorización de tratamiento de datos</h3><p>Permiso para almacenar y utilizar la información personal.</p></div><button class="secondary-button consent-action" data-consent-type="data">Diligenciar</button></article>
+            <article class="consent-card"><span class="consent-card-icon">▣</span><div><h3>Autorización de uso de imágenes</h3><p>Permiso opcional para usar fotografías del resultado.</p></div><button class="secondary-button consent-action" data-consent-type="images">Diligenciar</button></article>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <section class="public-flow" id="publicFlow" hidden>
+      <div class="public-card">
+        <div class="brand public-brand"><span class="brand-mark">C</span><span><strong>clara</strong><small>gestión bonita</small></span></div>
+        <div id="publicLookup">
+          <p class="eyebrow">Bienvenida</p><h1>Completa tu información</h1><p class="subheading">Selecciona el servicio y escribe tu número de cédula para continuar.</p>
+          <form id="lookupForm" class="public-form"><label>Servicio<select name="service" required><option value="">Selecciona un servicio</option><option>Diseño de cejas</option><option>Micropigmentación</option><option>Limpieza facial</option><option>Tratamiento personalizado</option></select></label><label>Número de cédula<input name="cedula" required inputmode="numeric" placeholder="Ej. 1234567890" /></label><button class="primary-button" type="submit">Continuar</button></form>
+          <p class="form-message" id="lookupMessage" role="status"></p>
+        </div>
+        <div id="publicResult" hidden><p class="eyebrow">Resultado</p><h1 id="publicResultTitle"></h1><p id="publicResultText" class="subheading"></p><button class="primary-button" id="createClinicalFile" hidden>Crear ficha clínica</button></div>
+        <form id="clinicalForm" class="public-form" hidden><p class="eyebrow">Ficha clínica</p><h1>Cuéntanos sobre ti</h1><p class="subheading">Esta información es confidencial y nos ayuda a brindarte una atención segura.</p><input type="hidden" name="service" /><input type="hidden" name="cedula" /><label>Nombre completo<input name="name" required /></label><label>Teléfono<input name="phone" required inputmode="tel" /></label><label>Correo electrónico<input name="email" type="email" /></label><label>¿Tienes alergias?<textarea name="allergies" rows="2" placeholder="Escribe ninguna si no aplica"></textarea></label><label>Antecedentes médicos relevantes<textarea name="medicalHistory" rows="3"></textarea></label><label>Medicamentos actuales<textarea name="medications" rows="2"></textarea></label><label class="consent-check"><input name="clinicalAccepted" type="checkbox" required /> Confirmo que la información es verdadera y autorizo su uso para mi atención.</label><button class="primary-button" type="submit">Guardar ficha clínica</button></form>
+      </div>
+    </section>
+    <dialog id="clientModal"><form method="dialog" id="clientForm"><div class="modal-header"><div><p class="eyebrow">Ficha de cliente</p><h2>Nuevo cliente</h2></div><button class="close-button" value="cancel" aria-label="Cerrar">×</button></div><div class="form-grid"><label>Nombre completo<input name="name" required placeholder="Ej. Ana García" /></label><label>Cédula<input name="cedula" required inputmode="numeric" placeholder="Ej. 1234567890" /></label><label>Teléfono<input name="phone" required placeholder="Ej. 300 123 4567" /></label><label>Correo electrónico<input name="email" type="email" placeholder="ana@correo.com" /></label><label>Próxima cita<input name="appointment" type="date" /></label><label class="full-width">Nota breve<textarea name="note" rows="3" placeholder="Preferencias, detalles importantes..." ></textarea></label></div><div class="modal-actions"><button class="secondary-button" value="cancel">Cancelar</button><button class="primary-button" value="default" type="submit">Guardar cliente</button></div></form></dialog>
+    <dialog id="consentModal"><form method="dialog" id="consentForm"><div class="modal-header"><div><p class="eyebrow">Consentimiento informado</p><h2 id="consentModalTitle">Diligenciar documento</h2></div><button class="close-button" value="cancel" aria-label="Cerrar">×</button></div><div class="consent-document"><p id="consentModalText"></p><label class="consent-check"><input name="accepted" type="checkbox" required /> Confirmo que leí y comprendí la información de este consentimiento.</label><label>Nombre de quien firma<input name="signature" required placeholder="Escribe el nombre completo" /></label><div class="signature-field"><div class="signature-heading"><label for="signatureCanvas">Firma manuscrita</label><button type="button" class="clear-signature" id="clearSignature">Limpiar</button></div><canvas id="signatureCanvas" width="640" height="190" tabindex="0" aria-label="Área para firmar con el dedo o lápiz óptico"></canvas><input id="signatureData" name="signatureData" type="hidden" required /><small>Firma dentro del recuadro usando tu dedo o lápiz óptico.</small></div><label>Fecha<input name="signedDate" type="date" required /></label></div><div class="modal-actions"><button class="secondary-button" value="cancel">Cancelar</button><button class="primary-button" value="default" type="submit">Guardar consentimiento</button></div></form></dialog>
+    <script src="app.js"></script>
+  </body>
+</html>
