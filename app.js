@@ -1,12 +1,12 @@
 const storageKey = 'clara-clientes';
-const seedClients = [
-  { id: 1, name: 'Laura Mendoza', cedula: '1001001001', email: 'laura.mendoza@gmail.com', phone: '315 482 9012', appointment: '2026-10-30', consent: 'Firmado', status: 'Activo', note: 'Diseño de cejas' },
-  { id: 2, name: 'Valentina Ríos', cedula: '1001001002', email: 'valentina.rios@gmail.com', phone: '310 774 1288', appointment: '2026-11-02', consent: 'Pendiente', status: 'Activo', note: 'Primera valoración' },
-  { id: 3, name: 'Camila Torres', cedula: '1001001003', email: 'camila.torres@gmail.com', phone: '300 912 4401', appointment: '', consent: 'Firmado', status: 'Inactivo', note: 'Retoque anual' },
-  { id: 4, name: 'Sofía Herrera', cedula: '1001001004', email: 'sofia.herrera@gmail.com', phone: '316 203 7740', appointment: '2026-11-05', consent: 'Firmado', status: 'Activo', note: 'Micropigmentación' }
-];
-
-let clients = JSON.parse(localStorage.getItem(storageKey) || 'null') || seedClients;
+const storedClients = JSON.parse(localStorage.getItem(storageKey) || 'null');
+const demoCedulas = new Set(['1001001001', '1001001002', '1001001003', '1001001004']);
+let clients = Array.isArray(storedClients)
+  ? storedClients.filter((client) => !demoCedulas.has(String(client.cedula || '')))
+  : [];
+if (Array.isArray(storedClients) && clients.length !== storedClients.length) {
+  localStorage.setItem(storageKey, JSON.stringify(clients));
+}
 const table = document.querySelector('#clientTable');
 const emptyState = document.querySelector('#emptyState');
 const searchInput = document.querySelector('#searchInput');
