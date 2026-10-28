@@ -85,6 +85,9 @@ function save() {
 }
 
 document.querySelector('#openClientModal').addEventListener('click', () => modal.showModal());
+document.querySelectorAll('[data-close-dialog]').forEach((button) => {
+  button.addEventListener('click', () => document.querySelector(`#${button.dataset.closeDialog}`).close());
+});
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   const data = new FormData(form);
