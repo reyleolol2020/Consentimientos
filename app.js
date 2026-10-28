@@ -214,12 +214,13 @@ function setupPublicFlow() {
 
 function setupQr() {
   if (!window.QRCode) return;
+  const publishedSiteUrl = 'https://reyleolol2020.github.io/Consentimientos/';
   const publicUrlInput = document.querySelector('#publicUrlInput');
   const qrWarning = document.querySelector('#qrWarning');
   const qrCode = document.querySelector('#qrCode');
   const downloadQr = document.querySelector('#downloadQr');
   const currentUrl = window.location.href.split('#')[0];
-  if (/^https?:$/.test(window.location.protocol)) publicUrlInput.value = currentUrl;
+  publicUrlInput.value = /^https?:$/.test(window.location.protocol) ? currentUrl : publishedSiteUrl;
   function generateQr() {
     const baseUrl = publicUrlInput.value.trim().replace(/#.*$/, '');
     qrCode.innerHTML = '';
@@ -238,7 +239,7 @@ function setupQr() {
   }
   document.querySelector('#generateQr').addEventListener('click', generateQr);
   if (/^https?:$/.test(window.location.protocol)) generateQr();
-  else qrWarning.textContent = 'Esta página está abierta como archivo local. Publica el proyecto y pega aquí su URL pública.';
+  else qrWarning.textContent = 'Usando la URL pública publicada en GitHub Pages.';
   downloadQr.addEventListener('click', () => {
     if (downloadQr.dataset.qrReady !== 'true') return;
     const canvas = document.querySelector('#qrCode canvas');
