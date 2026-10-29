@@ -15,8 +15,9 @@ const modal = document.querySelector('#clientModal');
 const form = document.querySelector('#clientForm');
 const appointmentModal = document.querySelector('#appointmentModal');
 const appointmentForm = document.querySelector('#appointmentForm');
-const calendarDays = document.querySelector('#calendarDays');
-const calendarMonth = document.querySelector('#calendarMonth');
+const weekDayHeaders = document.querySelector('#weekDayHeaders');
+const timeColumn = document.querySelector('#timeColumn');
+const weekColumns = document.querySelector('#weekColumns');
 const appointmentsKey = 'clara-citas';
 let appointments = JSON.parse(localStorage.getItem(appointmentsKey) || '[]');
 let calendarDate = new Date();
@@ -91,26 +92,38 @@ function save() {
   render();
 }
 
+function dateKey(date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+function startOfWeek(date) {
+  const result = new Date(date);
+  result.setHours(0, 0, 0, 0);
+  result.setDate(result.getDate() - result.getDay());
+  return result;
+}
 function renderCalendar() {
-  const year = calendarDate.getFullYear();
-  const month = calendarDate.getMonth();
-  calendarMonth.textContent = new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric' }).format(calendarDate).replace(/^./, (letter) => letter.toUpperCase());
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const previousDays = new Date(year, month, 0).getDate();
-  const cells = [];
-  for (let index = firstDay - 1; index >= 0; index -= 1) cells.push({ day: previousDays - index, outside: true, date: new Date(year, month - 1, previousDays - index) });
-  for (let day = 1; day <= daysInMonth; day += 1) cells.push({ day, date: new Date(year, month, day) });
-  while (cells.length < 42) {
-    const day = cells.length - (firstDay + daysInMonth) + 1;
-    cells.push({ day, outside: true, date: new Date(year, month + 1, day) });
-  }
-  calendarDays.innerHTML = cells.map(({ day, outside, date }) => {
-    const dateKey = date.toISOString().slice(0, 10);
-    const dayAppointments = appointments.filter((appointment) => appointment.date === dateKey);
-    const today = new Date();
-    const isToday = date.toDateString() === today.toDateString();
-    return `<button class="calendar-day${outside ? ' outside' : ''}${isToday ? ' today' : ''}" data-calendar-date="${dateKey}"><span class="day-number">${day}</span>${dayAppointments.map((appointment) => `<span class="calendar-event">${appointment.time} · ${appointment.clientName}</span>`).join('')}</button>`;
+  const weekStart = startOfWeek(calendarDate);
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + index);
+    return date;
+  });
+  const monthLabel = new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric' }).format(calendarDate);
+  document.querySelector('#calendarWeek').textContent = monthLabel.replace(/^./, (letter) => letter.toUpperCase());
+  weekDayHeaders.innerHTML = days.map((date) => {
+    const isToday = date.toDateString() === new Date().toDateString();
+    return `<div class="week-day-header${isToday ? ' current-day' : ''}" data-calendar-date="${dateKey(date)}"><small>${new Intl.DateTimeFormat('es-CO', { weekday: 'short' }).format(date).replace('.', '').toUpperCase()}</small><strong>${date.getDate()}</strong></div>`;
+  }).join('');
+  timeColumn.innerHTML = Array.from({ length: 12 }, (_, index) => `<div>${index + 8}:00</div>`).join('');
+  weekColumns.innerHTML = days.map((date) => {
+    const key = dateKey(date);
+    const dayAppointments = appointments.filter((appointment) => appointment.date === key);
+    return `<div class="week-column" data-calendar-date="${key}">${Array.from({ length: 12 }, (_, index) => `<button class="hour-slot" data-calendar-date="${key}" data-hour="${index + 8}" aria-label="Agregar cita a las ${index + 8}:00"></button>`).join('')}${dayAppointments.map((appointment) => {
+      const hour = Number(appointment.time.split(':')[0]) || 8;
+      const minute = Number(appointment.time.split(':')[1]) || 0;
+      const top = ((hour - 8) * 60) + minute;
+      return `<button class="week-event" style="top:${top}px" data-appointment-id="${appointment.id}"><strong>${appointment.time} · ${appointment.clientName}</strong><small>${appointment.service}</small></button>`;
+    }).join('')}</div>`;
   }).join('');
 }
 
@@ -152,19 +165,22 @@ table.addEventListener('click', (event) => {
   clients = clients.filter((client) => client.id !== Number(button.dataset.id));
   save();
 });
-document.querySelector('#previousMonth').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(); });
-document.querySelector('#nextMonth').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(); });
+document.querySelector('#previousWeek').addEventListener('click', () => { calendarDate.setDate(calendarDate.getDate() - 7); renderCalendar(); });
+document.querySelector('#nextWeek').addEventListener('click', () => { calendarDate.setDate(calendarDate.getDate() + 7); renderCalendar(); });
 document.querySelector('#todayButton').addEventListener('click', () => { calendarDate = new Date(); renderCalendar(); });
 document.querySelector('#newAppointment').addEventListener('click', () => {
   appointmentForm.reset();
   appointmentForm.elements.date.value = new Date().toISOString().slice(0, 10);
   appointmentModal.showModal();
 });
-calendarDays.addEventListener('click', (event) => {
+weekColumns.addEventListener('click', (event) => {
   const day = event.target.closest('[data-calendar-date]');
   if (!day) return;
+  if (event.target.closest('.week-event')) return;
   appointmentForm.reset();
   appointmentForm.elements.date.value = day.dataset.calendarDate;
+  const hour = day.dataset.hour;
+  if (hour) appointmentForm.elements.time.value = `${String(hour).padStart(2, '0')}:00`;
   appointmentModal.showModal();
 });
 appointmentForm.addEventListener('submit', (event) => {
