@@ -13,6 +13,13 @@ const searchInput = document.querySelector('#searchInput');
 const statusFilter = document.querySelector('#statusFilter');
 const modal = document.querySelector('#clientModal');
 const form = document.querySelector('#clientForm');
+const appointmentModal = document.querySelector('#appointmentModal');
+const appointmentForm = document.querySelector('#appointmentForm');
+const calendarDays = document.querySelector('#calendarDays');
+const calendarMonth = document.querySelector('#calendarMonth');
+const appointmentsKey = 'clara-citas';
+let appointments = JSON.parse(localStorage.getItem(appointmentsKey) || '[]');
+let calendarDate = new Date();
 const consentModal = document.querySelector('#consentModal');
 const consentForm = document.querySelector('#consentForm');
 const consentClientSelect = document.querySelector('#consentClientSelect');
@@ -84,7 +91,41 @@ function save() {
   render();
 }
 
+function renderCalendar() {
+  const year = calendarDate.getFullYear();
+  const month = calendarDate.getMonth();
+  calendarMonth.textContent = new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric' }).format(calendarDate).replace(/^./, (letter) => letter.toUpperCase());
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const previousDays = new Date(year, month, 0).getDate();
+  const cells = [];
+  for (let index = firstDay - 1; index >= 0; index -= 1) cells.push({ day: previousDays - index, outside: true, date: new Date(year, month - 1, previousDays - index) });
+  for (let day = 1; day <= daysInMonth; day += 1) cells.push({ day, date: new Date(year, month, day) });
+  while (cells.length < 42) {
+    const day = cells.length - (firstDay + daysInMonth) + 1;
+    cells.push({ day, outside: true, date: new Date(year, month + 1, day) });
+  }
+  calendarDays.innerHTML = cells.map(({ day, outside, date }) => {
+    const dateKey = date.toISOString().slice(0, 10);
+    const dayAppointments = appointments.filter((appointment) => appointment.date === dateKey);
+    const today = new Date();
+    const isToday = date.toDateString() === today.toDateString();
+    return `<button class="calendar-day${outside ? ' outside' : ''}${isToday ? ' today' : ''}" data-calendar-date="${dateKey}"><span class="day-number">${day}</span>${dayAppointments.map((appointment) => `<span class="calendar-event">${appointment.time} · ${appointment.clientName}</span>`).join('')}</button>`;
+  }).join('');
+}
+
+function showSection(section) {
+  const clientSections = ['clientsHeading', 'clientsMetrics', 'clientsWorkspace', 'qrPanel', 'consentimientos'];
+  clientSections.forEach((id) => { document.querySelector(`#${id}`).hidden = section === 'agenda'; });
+  document.querySelector('#agenda').hidden = section !== 'agenda';
+  document.querySelectorAll('.nav-link').forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${section}`));
+  document.querySelector('.breadcrumb strong').textContent = section === 'agenda' ? 'Agenda' : 'Clientes';
+}
+
 document.querySelector('#openClientModal').addEventListener('click', () => modal.showModal());
+document.querySelectorAll('.nav-link').forEach((link) => {
+  link.addEventListener('click', () => showSection(link.getAttribute('href').slice(1) === 'agenda' ? 'agenda' : 'clientes'));
+});
 document.querySelectorAll('[data-close-dialog]').forEach((button) => {
   button.addEventListener('click', () => document.querySelector(`#${button.dataset.closeDialog}`).close());
 });
@@ -110,6 +151,31 @@ table.addEventListener('click', (event) => {
   if (!button) return;
   clients = clients.filter((client) => client.id !== Number(button.dataset.id));
   save();
+});
+document.querySelector('#previousMonth').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() - 1); renderCalendar(); });
+document.querySelector('#nextMonth').addEventListener('click', () => { calendarDate.setMonth(calendarDate.getMonth() + 1); renderCalendar(); });
+document.querySelector('#todayButton').addEventListener('click', () => { calendarDate = new Date(); renderCalendar(); });
+document.querySelector('#newAppointment').addEventListener('click', () => {
+  appointmentForm.reset();
+  appointmentForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  appointmentModal.showModal();
+});
+calendarDays.addEventListener('click', (event) => {
+  const day = event.target.closest('[data-calendar-date]');
+  if (!day) return;
+  appointmentForm.reset();
+  appointmentForm.elements.date.value = day.dataset.calendarDate;
+  appointmentModal.showModal();
+});
+appointmentForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const data = new FormData(appointmentForm);
+  appointments.push({ id: Date.now(), clientName: data.get('clientName'), service: data.get('service'), date: data.get('date'), time: data.get('time'), note: data.get('note') });
+  localStorage.setItem(appointmentsKey, JSON.stringify(appointments));
+  const client = clients.find((item) => item.name.toLowerCase() === String(data.get('clientName')).toLowerCase());
+  if (client) { client.appointment = data.get('date'); save(); } else render();
+  renderCalendar();
+  appointmentModal.close();
 });
 document.querySelectorAll('.consent-action').forEach((button) => {
   button.addEventListener('click', () => openConsent(button.dataset.consentType));
@@ -182,6 +248,8 @@ consentForm.addEventListener('submit', (event) => {
   consentModal.close();
 });
 render();
+renderCalendar();
+showSection(window.location.hash === '#agenda' ? 'agenda' : 'clientes');
 
 function setupPublicFlow() {
   document.querySelector('.app-shell').hidden = true;

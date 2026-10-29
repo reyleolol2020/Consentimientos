@@ -36,25 +36,34 @@
           <div class="top-actions"><button class="icon-button" aria-label="Notificaciones">♧<em></em></button><button class="help-button">¿Necesitas ayuda?</button></div>
         </header>
 
-        <section class="page-heading">
+        <section class="page-heading" id="clientsHeading">
           <div><p class="eyebrow">Panel general</p><h1>Tus clientes</h1><p class="subheading">Un espacio claro para cuidar cada relación.</p></div>
           <button class="primary-button" id="openClientModal"><span>+</span> Nuevo cliente</button>
         </section>
 
-        <section class="metric-grid" aria-label="Resumen de clientes">
+        <section class="metric-grid" id="clientsMetrics" aria-label="Resumen de clientes">
           <article class="metric-card"><div class="metric-label"><span class="metric-icon pink">♧</span><span>Total clientes</span></div><strong id="totalClients">0</strong><small><span class="positive">↑ 12%</span> vs. mes anterior</small></article>
           <article class="metric-card"><div class="metric-label"><span class="metric-icon mint">◷</span><span>Próximas citas</span></div><strong id="upcomingAppointments">0</strong><small>Durante los próximos 7 días</small></article>
           <article class="metric-card"><div class="metric-label"><span class="metric-icon yellow">✓</span><span>Consentimientos</span></div><strong id="pendingConsents">0</strong><small><span class="warning">Pendientes</span> de firma</small></article>
           <article class="metric-card highlight"><div class="metric-label"><span class="sparkle">✦</span><span>Clientes activos</span></div><strong id="activeClients">0%</strong><small>De tu base total</small><div class="progress"><span id="activeProgress"></span></div></article>
         </section>
 
-        <section class="workspace-panel">
+        <section class="workspace-panel" id="clientsWorkspace">
           <div class="panel-toolbar"><div><h2>Todos tus clientes</h2><p id="clientSummary">0 registros guardados</p></div><div class="toolbar-actions"><label class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="Buscar cliente..." /></label><select id="statusFilter" aria-label="Filtrar por estado"><option value="all">Todos los estados</option><option value="Activo">Activos</option><option value="Inactivo">Inactivos</option></select><button class="filter-button" id="filterButton">☷ <span>Filtros</span></button></div></div>
           <div class="table-wrap"><table><thead><tr><th>CLIENTE</th><th>CÉDULA</th><th>CONTACTO</th><th>ÚLTIMA CITA</th><th>CONSENTIMIENTO</th><th>ESTADO</th><th></th></tr></thead><tbody id="clientTable"></tbody></table><div class="empty-state" id="emptyState" hidden><span>⌁</span><strong>No encontramos clientes</strong><p>Prueba otra búsqueda o crea un nuevo cliente.</p></div></div>
           <div class="table-footer"><span id="tableCount">Mostrando 0 clientes</span><div class="pagination"><button disabled>‹</button><button class="current">1</button><button disabled>›</button></div></div>
         </section>
 
-        <section class="qr-panel" aria-labelledby="qrTitle">
+        <section class="agenda-panel" id="agenda" aria-labelledby="agendaTitle" hidden>
+          <div class="agenda-header">
+            <div><p class="eyebrow">Organiza tu semana</p><h1 id="agendaTitle">Agenda</h1><p class="subheading">Programa y consulta las citas de tus clientas.</p></div>
+            <button class="primary-button" id="newAppointment"><span>+</span> Nueva cita</button>
+          </div>
+          <div class="calendar-toolbar"><div class="calendar-navigation"><button class="calendar-nav" id="previousMonth" aria-label="Mes anterior">‹</button><button class="calendar-today" id="todayButton">Hoy</button><button class="calendar-nav" id="nextMonth" aria-label="Mes siguiente">›</button><h2 id="calendarMonth"></h2></div><div class="calendar-view-label">Mes</div></div>
+          <div class="calendar-grid"><div class="calendar-weekdays"><span>DOM</span><span>LUN</span><span>MAR</span><span>MIÉ</span><span>JUE</span><span>VIE</span><span>SÁB</span></div><div id="calendarDays" class="calendar-days"></div></div>
+        </section>
+
+        <section class="qr-panel" id="qrPanel" aria-labelledby="qrTitle">
           <div><p class="eyebrow">Acceso para tus clientas</p><h2 id="qrTitle">Código QR para ficha clínica</h2><p>La página debe estar publicada en internet para que el celular de la clienta pueda abrirla.</p><label class="qr-url-field">URL pública de tu página<input id="publicUrlInput" type="url" placeholder="https://tu-usuario.github.io/tu-repositorio/" /></label><div class="qr-actions"><button class="primary-button" id="generateQr" type="button">Generar QR</button><button class="secondary-button" id="downloadQr" type="button" disabled>Descargar código QR</button></div><p class="qr-warning" id="qrWarning" role="status"></p></div>
           <div class="qr-box"><div id="qrCode"></div><small id="qrUrl"></small></div>
         </section>
@@ -87,6 +96,7 @@
     </section>
     <dialog id="clientModal"><form method="dialog" id="clientForm"><div class="modal-header"><div><p class="eyebrow">Ficha de cliente</p><h2>Nuevo cliente</h2></div><button class="close-button" type="button" data-close-dialog="clientModal" aria-label="Cerrar">×</button></div><div class="form-grid"><label>Nombre completo<input name="name" required placeholder="Ej. Ana García" /></label><label>Cédula<input name="cedula" required inputmode="numeric" placeholder="Ej. 1234567890" /></label><label>Teléfono<input name="phone" required placeholder="Ej. 300 123 4567" /></label><label>Correo electrónico<input name="email" type="email" placeholder="ana@correo.com" /></label><label>Próxima cita<input name="appointment" type="date" /></label><label class="full-width">Nota breve<textarea name="note" rows="3" placeholder="Preferencias, detalles importantes..." ></textarea></label></div><div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="clientModal">Cancelar</button><button class="primary-button" value="default" type="submit">Guardar cliente</button></div></form></dialog>
     <dialog id="consentModal"><form method="dialog" id="consentForm"><div class="modal-header"><div><p class="eyebrow">Consentimiento informado</p><h2 id="consentModalTitle">Diligenciar documento</h2></div><button class="close-button" type="button" data-close-dialog="consentModal" aria-label="Cerrar">×</button></div><div class="consent-document"><p id="consentModalText"></p><label class="consent-check"><input name="accepted" required type="checkbox" /> Confirmo que leí y comprendí la información de este consentimiento.</label><label>Nombre de quien firma<input name="signature" required placeholder="Escribe el nombre completo" /></label><div class="signature-field"><div class="signature-heading"><label for="signatureCanvas">Firma manuscrita</label><button type="button" class="clear-signature" id="clearSignature">Limpiar</button></div><canvas id="signatureCanvas" width="640" height="190" tabindex="0" aria-label="Área para firmar con el dedo o lápiz óptico"></canvas><input id="signatureData" name="signatureData" type="hidden" required /><small>Firma dentro del recuadro usando tu dedo o lápiz óptico.</small></div><label>Fecha<input name="signedDate" type="date" required /></label></div><div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="consentModal">Cancelar</button><button class="primary-button" value="default" type="submit">Guardar consentimiento</button></div></form></dialog>
+    <dialog id="appointmentModal"><form method="dialog" id="appointmentForm"><div class="modal-header"><div><p class="eyebrow">Agenda</p><h2>Nueva cita</h2></div><button class="close-button" type="button" data-close-dialog="appointmentModal" aria-label="Cerrar">×</button></div><div class="form-grid"><label>Nombre de la clienta<input name="clientName" required placeholder="Ej. Ana García" /></label><label>Servicio<select name="service" required><option value="">Selecciona un servicio</option><option>Diseño de cejas</option><option>Micropigmentación</option><option>Limpieza facial</option><option>Tratamiento personalizado</option></select></label><label>Fecha<input name="date" type="date" required /></label><label>Hora<input name="time" type="time" required /></label><label class="full-width">Nota<textarea name="note" rows="2" placeholder="Detalles de la cita..."></textarea></label></div><div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="appointmentModal">Cancelar</button><button class="primary-button" value="default" type="submit">Guardar cita</button></div></form></dialog>
     <script src="app.js?v=empty-clients"></script>
   </body>
 </html>
