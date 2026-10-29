@@ -30,42 +30,6 @@
         </div>
       </aside>
 
-
-      <main class="main-content">
-        <header class="topbar">
-          <div class="breadcrumb"><span>Espacio de trabajo</span><i>/</i><strong>Clientes</strong></div>
-          <div class="top-actions"><button class="icon-button" aria-label="Notificaciones">♧<em></em></button><button class="help-button">¿Necesitas ayuda?</button></div><!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Gestión de clientes y consentimientos informados" />
-    <title>Clara CRM | Clientes</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css?v=aqua" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  </head>
-  <body>
-    <div class="app-shell">
-      <aside class="sidebar">
-        <a class="brand" href="#clientes" aria-label="Clara CRM inicio">
-          <span class="brand-mark">C</span>
-          <span><strong>clara</strong><small>gestión bonita</small></span>
-        </a>
-        <nav class="main-nav" aria-label="Navegación principal">
-          <a class="nav-link active" href="#clientes"><span>▦</span> Clientes <b id="navClientCount">0</b></a>
-          <a class="nav-link" href="#agenda"><span>◷</span> Agenda</a>
-          <a class="nav-link" href="#consentimientos"><span>✓</span> Consentimientos</a>
-          <a class="nav-link" href="#reportes"><span>⌁</span> Reportes</a>
-        </nav>
-        <div class="sidebar-footer">
-          <div class="profile"><span class="avatar">JM</span><span><strong>Jessica Mojica</strong><small>Administradora</small></span><button aria-label="Abrir menú de usuario">•••</button></div>
-          <p>Clara CRM <span>v1.0</span></p>
-        </div>
-      </aside>
-
       <main class="main-content">
         <header class="topbar">
           <div class="breadcrumb"><span>Espacio de trabajo</span><i>/</i><strong>Clientes</strong></div>
@@ -133,6 +97,6 @@
     <dialog id="clientModal"><form method="dialog" id="clientForm"><div class="modal-header"><div><p class="eyebrow">Ficha de cliente</p><h2>Nuevo cliente</h2></div><button class="close-button" type="button" data-close-dialog="clientModal" aria-label="Cerrar">×</button></div><div class="form-grid"><label>Nombre completo<input name="name" required placeholder="Ej. Ana García" /></label><label>Cédula<input name="cedula" required inputmode="numeric" placeholder="Ej. 1234567890" /></label><label>Teléfono<input name="phone" required placeholder="Ej. 300 123 4567" /></label><label>Correo electrónico<input name="email" type="email" placeholder="ana@correo.com" /></label><label>Próxima cita<input name="appointment" type="date" /></label><label class="full-width">Nota breve<textarea name="note" rows="3" placeholder="Preferencias, detalles importantes..." ></textarea></label></div><div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="clientModal">Cancelar</button><button class="primary-button" value="default" type="submit">Guardar cliente</button></div></form></dialog>
     <dialog id="consentModal"><form method="dialog" id="consentForm"><div class="modal-header"><div><p class="eyebrow">Consentimiento informado</p><h2 id="consentModalTitle">Diligenciar documento</h2></div><button class="close-button" type="button" data-close-dialog="consentModal" aria-label="Cerrar">×</button></div><div class="consent-document"><p id="consentModalText"></p><label class="consent-check"><input name="accepted" required type="checkbox" /> Confirmo que leí y comprendí la información de este consentimiento.</label><label>Nombre de quien firma<input name="signature" required placeholder="Escribe el nombre completo" /></label><div class="signature-field"><div class="signature-heading"><label for="signatureCanvas">Firma manuscrita</label><button type="button" class="clear-signature" id="clearSignature">Limpiar</button></div><canvas id="signatureCanvas" width="640" height="190" tabindex="0" aria-label="Área para firmar con el dedo o lápiz óptico"></canvas><input id="signatureData" name="signatureData" type="hidden" required /><small>Firma dentro del recuadro usando tu dedo o lápiz óptico.</small></div><label>Fecha<input name="signedDate" type="date" required /></label></div><div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="consentModal">Cancelar</button><button class="primary-button" value="default" type="submit">Guardar consentimiento</button></div></form></dialog>
     <dialog id="appointmentModal"><form method="dialog" id="appointmentForm"><div class="modal-header"><div><p class="eyebrow">Agenda</p><h2>Nueva cita</h2></div><button class="close-button" type="button" data-close-dialog="appointmentModal" aria-label="Cerrar">×</button></div><div class="form-grid"><label>Nombre de la clienta<input name="clientName" required placeholder="Ej. Ana García" /></label><label>Servicio<select name="service" required><option value="">Selecciona un servicio</option><option>Diseño de cejas</option><option>Micropigmentación</option><option>Limpieza facial</option><option>Tratamiento personalizado</option></select></label><label>Fecha<input name="date" type="date" required /></label><label>Hora<input name="time" type="time" required /></label><label class="full-width">Nota<textarea name="note" rows="2" placeholder="Detalles de la cita..."></textarea></label></div><div class="modal-actions"><button class="secondary-button" type="button" data-close-dialog="appointmentModal">Cancelar</button><button class="primary-button" value="default" type="submit">Guardar cita</button></div></form></dialog>
-    <script src="app.js?v=week-view"></script>
+    <script src="app.js?v=agenda-week-2"></script>
   </body>
 </html>

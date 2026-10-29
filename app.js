@@ -95,10 +95,14 @@ function save() {
 function dateKey(date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
+function localDateKey(date = new Date()) {
+  return dateKey(date);
+}
 function startOfWeek(date) {
   const result = new Date(date);
   result.setHours(0, 0, 0, 0);
-  result.setDate(result.getDate() - result.getDay());
+  const day = result.getDay();
+  result.setDate(result.getDate() - (day === 0 ? 6 : day - 1));
   return result;
 }
 function renderCalendar() {
@@ -108,8 +112,9 @@ function renderCalendar() {
     date.setDate(weekStart.getDate() + index);
     return date;
   });
-  const monthLabel = new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric' }).format(calendarDate);
-  document.querySelector('#calendarWeek').textContent = monthLabel.replace(/^./, (letter) => letter.toUpperCase());
+  const rangeStart = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'short' }).format(days[0]).replace('.', '');
+  const rangeEnd = new Intl.DateTimeFormat('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }).format(days[6]).replace('.', '');
+  document.querySelector('#calendarWeek').textContent = `${rangeStart} - ${rangeEnd}`;
   weekDayHeaders.innerHTML = days.map((date) => {
     const isToday = date.toDateString() === new Date().toDateString();
     return `<div class="week-day-header${isToday ? ' current-day' : ''}" data-calendar-date="${dateKey(date)}"><small>${new Intl.DateTimeFormat('es-CO', { weekday: 'short' }).format(date).replace('.', '').toUpperCase()}</small><strong>${date.getDate()}</strong></div>`;
@@ -170,7 +175,7 @@ document.querySelector('#nextWeek').addEventListener('click', () => { calendarDa
 document.querySelector('#todayButton').addEventListener('click', () => { calendarDate = new Date(); renderCalendar(); });
 document.querySelector('#newAppointment').addEventListener('click', () => {
   appointmentForm.reset();
-  appointmentForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  appointmentForm.elements.date.value = localDateKey();
   appointmentModal.showModal();
 });
 weekColumns.addEventListener('click', (event) => {
