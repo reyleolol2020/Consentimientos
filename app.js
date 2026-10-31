@@ -133,16 +133,23 @@ function renderCalendar() {
 }
 
 function showSection(section) {
-  const clientSections = ['clientsHeading', 'clientsMetrics', 'clientsWorkspace', 'qrPanel', 'consentimientos'];
-  clientSections.forEach((id) => { document.querySelector(`#${id}`).hidden = section === 'agenda'; });
-  document.querySelector('#agenda').hidden = section !== 'agenda';
+  const sections = {
+    clientes: ['clientsHeading', 'clientsMetrics', 'clientsWorkspace'],
+    agenda: ['agenda'],
+    consentimientos: ['consentimientos'],
+    ficha: ['ficha']
+  };
+  const visibleSections = sections[section] || sections.clientes;
+  ['clientsHeading', 'clientsMetrics', 'clientsWorkspace', 'agenda', 'ficha', 'consentimientos']
+    .forEach((id) => { document.querySelector(`#${id}`).hidden = !visibleSections.includes(id); });
   document.querySelectorAll('.nav-link').forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${section}`));
-  document.querySelector('.breadcrumb strong').textContent = section === 'agenda' ? 'Agenda' : 'Clientes';
+  const labels = { clientes: 'Clientes', agenda: 'Agenda', consentimientos: 'Consentimientos', ficha: 'Ficha clínica' };
+  document.querySelector('.breadcrumb strong').textContent = labels[section] || labels.clientes;
 }
 
 document.querySelector('#openClientModal').addEventListener('click', () => modal.showModal());
 document.querySelectorAll('.nav-link').forEach((link) => {
-  link.addEventListener('click', () => showSection(link.getAttribute('href').slice(1) === 'agenda' ? 'agenda' : 'clientes'));
+  link.addEventListener('click', () => showSection(link.getAttribute('href').slice(1)));
 });
 document.querySelectorAll('[data-close-dialog]').forEach((button) => {
   button.addEventListener('click', () => document.querySelector(`#${button.dataset.closeDialog}`).close());
@@ -161,7 +168,7 @@ table.addEventListener('click', (event) => {
   const consentButton = event.target.closest('[data-consent-client]');
   if (consentButton) {
     consentClientSelect.value = consentButton.dataset.consentClient;
-    document.querySelector('#consentimientos').scrollIntoView({ behavior: 'smooth' });
+    showSection('consentimientos');
     openConsent('procedure');
     return;
   }
@@ -270,7 +277,8 @@ consentForm.addEventListener('submit', (event) => {
 });
 render();
 renderCalendar();
-showSection(window.location.hash === '#agenda' ? 'agenda' : 'clientes');
+const initialSection = window.location.hash.slice(1);
+showSection(['agenda', 'consentimientos', 'ficha'].includes(initialSection) ? initialSection : 'clientes');
 
 function setupPublicFlow() {
   document.querySelector('.app-shell').hidden = true;

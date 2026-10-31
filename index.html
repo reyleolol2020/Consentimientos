@@ -22,7 +22,7 @@
           <a class="nav-link active" href="#clientes"><span>▦</span> Clientes <b id="navClientCount">0</b></a>
           <a class="nav-link" href="#agenda"><span>◷</span> Agenda</a>
           <a class="nav-link" href="#consentimientos"><span>✓</span> Consentimientos</a>
-          <a class="nav-link" href="#reportes"><span>⌁</span> Reportes</a>
+          <a class="nav-link" href="#ficha"><span>⌁</span> Ficha clínica</a>
         </nav>
         <div class="sidebar-footer">
           <div class="profile"><span class="avatar">JM</span><span><strong>Jessica Mojica</strong><small>Administradora</small></span><button aria-label="Abrir menú de usuario">•••</button></div>
@@ -63,7 +63,7 @@
           <div class="week-calendar"><div class="week-header"><span class="timezone-label">GMT-05</span><div id="weekDayHeaders"></div></div><div class="week-body"><div class="time-column" id="timeColumn"></div><div class="week-columns" id="weekColumns"></div></div></div>
         </section>
 
-        <section class="qr-panel" id="qrPanel" aria-labelledby="qrTitle">
+        <section class="qr-panel" id="ficha" aria-labelledby="qrTitle" hidden>
           <div><p class="eyebrow">Acceso para tus clientas</p><h2 id="qrTitle">Código QR para ficha clínica</h2><p>La página debe estar publicada en internet para que el celular de la clienta pueda abrirla.</p><label class="qr-url-field">URL pública de tu página<input id="publicUrlInput" type="url" placeholder="https://tu-usuario.github.io/tu-repositorio/" /></label><div class="qr-actions"><button class="primary-button" id="generateQr" type="button">Generar QR</button><button class="secondary-button" id="downloadQr" type="button" disabled>Descargar código QR</button></div><p class="qr-warning" id="qrWarning" role="status"></p></div>
           <div class="qr-box"><div id="qrCode"></div><small id="qrUrl"></small></div>
         </section>
